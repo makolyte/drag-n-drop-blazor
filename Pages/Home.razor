@@ -1,0 +1,54 @@
+﻿@page "/"
+
+<style>
+    .dropzone {
+        width: 350px;
+        height: 70px;
+        padding: 10px;
+        border: 1px solid #aaaaaa;
+    }
+</style>
+
+<PageTitle>Drag and Drop</PageTitle>
+
+
+<p>Drag the image from one box to the other</p>
+
+<div class="dropzone" ondragover="event.preventDefault();" @ondrop="HandleDrop">
+    @foreach (var img in Images.Where(i => i.IsTop))
+    {
+        <img id="w3image" src="@img.Src" draggable="true" @ondragstart="_ => HandleDragStart(img)" width="336" height="69" />
+
+    }
+</div>
+<div class="dropzone" ondragover="event.preventDefault();" @ondrop="HandleDrop">
+    @foreach (var img in Images.Where(i => !i.IsTop))
+    {
+        <img id="w3image" src="@img.Src" draggable="true" @ondragstart="_ => HandleDragStart(img)" width="336" height="69" />
+
+    }
+</div>
+
+@code {
+    public List<Img> Images { get; set; } = new List<Img>()
+    {
+       new Img() { Src="img_logo.gif", IsTop =false }
+    };
+
+    private Img draggingImage = null;
+    public void HandleDragStart(Img img)
+    {
+        draggingImage = img;
+    }
+    public void HandleDrop(DragEventArgs args)
+    {
+        draggingImage.IsTop = !draggingImage.IsTop;
+        Console.WriteLine($"Dropping id {draggingImage.Src}");
+    }
+
+    public class Img
+    {
+        public string Src { get; set; }
+        public bool IsTop { get; set; }
+    }
+}
